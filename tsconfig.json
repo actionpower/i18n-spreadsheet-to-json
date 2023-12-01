@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es6" /* 최신 브라우저는 es6을 대부분 지원한다. */,
+    "module": "ES2015",
+    "moduleResolution": "node",
+    "lib": [
+      "es5",
+      "es6",
+      "dom"
+    ] /* 타입스크립트가 어떤 버전의 JS의 빌트인 api를 사용할건지에 대한 것을 명시해 준다. */,
+    "declaration": true /* 타입스크립트가 자동으로 타입정의 (d.ts) 파일을 생성해 준다. */,
+    "outDir": "dist" /* 컴파일된 결과물을 어디에 저장할지에 대한 것을 명시해 준다. */,
+    "strict": true /* 타입스크립트의 엄격한 모드를 활성화한다. */,
+    "esModuleInterop": true
+  },
+  "include": ["index.mts"],
+  "ts-node": { "esm": true }
+}

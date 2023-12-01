@@ -1,0 +1,21 @@
+{
+  "name": "spreadsheet-to-json",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "index.mts",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.1",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "axios": "^1.6.2",
+    "fs": "^0.0.1-security",
+    "lodash-es": "^4.17.21",
+    "prettier": "^3.1.0"
+  },
+  "scripts": {
+    "i18n": "ts-node ./index.mts"
+  }
+}
