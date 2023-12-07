@@ -1,6 +1,6 @@
 {
-  "name": "spreadsheet-to-json",
-  "version": "0.0.1",
+  "name": "i18n-spreadsheet-to-json",
+  "version": "0.0.2",
   "type": "module",
   "main": "index.mts",
   "license": "MIT",
@@ -17,5 +17,8 @@
   },
   "scripts": {
     "i18n": "ts-node ./index.mts"
+  },
+  "bin": {
+    "i18n": "./index.mts"
   }
 }

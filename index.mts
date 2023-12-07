@@ -62,7 +62,6 @@ const getI18nMetaFromSpreedSheet = async () => {
 const getI18nDataFromSheet = async (fileName: string) => {
   const configString = fs.readFileSync("i18nconfig.json", "utf8");
   const config = JSON.parse(configString);
-  console.log(config.GOOGLE_API_KEY, "실행");
 
   const GOOGLE_SHEET_ID = config.GOOGLE_SHEET_ID;
   const response = await axios.get(
