@@ -19,6 +19,6 @@
     "i18n": "ts-node ./index.mts"
   },
   "bin": {
-    "i18n": "./index.mts"
+    "i18n": "ts-node ./index.mts"
   }
 }
