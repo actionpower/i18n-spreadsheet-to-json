@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/lodash-es": "^4.17.12",
     "axios": "^1.6.2",
+    "commander": "^11.1.0",
     "fs": "^0.0.1-security",
     "lodash-es": "^4.17.21",
     "prettier": "^3.1.0"
@@ -19,6 +20,9 @@
     "i18n": "ts-node ./index.mts"
   },
   "bin": {
-    "i18n": "ts-node ./index.mts"
-  }
+    "i18n": "bin/cli.js"
+  },
+  "files": [
+    "cli"
+  ]
 }
