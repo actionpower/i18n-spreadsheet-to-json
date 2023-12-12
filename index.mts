@@ -2,7 +2,7 @@ import axios from "axios";
 import fs from "fs";
 import prettier from "prettier";
 import { merge, setWith } from "lodash-es";
-import path from "path";
+
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 
 type SheetProperties = {
@@ -50,10 +50,7 @@ const rawDataToObjectFormatter = (
     );
 
 const getI18nMetaFromSpreedSheet = async () => {
-  const configString = fs.readFileSync(
-    path.join(__dirname, "i18nconfig.json"),
-    "utf8"
-  );
+  const configString = fs.readFileSync("i18nconfig.json", "utf8");
   const config = JSON.parse(configString);
 
   const response = await axios.get(
@@ -63,10 +60,7 @@ const getI18nMetaFromSpreedSheet = async () => {
 };
 
 const getI18nDataFromSheet = async (fileName: string) => {
-  const configString = fs.readFileSync(
-    path.join(__dirname, path.join(__dirname, "i18nconfig.json")),
-    "utf8"
-  );
+  const configString = fs.readFileSync("i18nconfig.json", "utf8");
   const config = JSON.parse(configString);
 
   const GOOGLE_SHEET_ID = config.GOOGLE_SHEET_ID;
@@ -83,10 +77,7 @@ const getI18nDataFromSheet = async (fileName: string) => {
 };
 
 const getAllData = async (rangesParams: string) => {
-  const configString = fs.readFileSync(
-    path.join(__dirname, "i18nconfig.json"),
-    "utf8"
-  );
+  const configString = fs.readFileSync("i18nconfig.json", "utf8");
   const config = JSON.parse(configString);
   const response = await axios.get(
     `${GOOGLE_SHEET_BASE_URL}/${config.GOOGLE_SHEET_ID}/values:batchGet?${rangesParams}`,
@@ -138,7 +129,5 @@ const createI18n = async (fileName?: string) => {
     formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
   });
 };
-
-// createI18n(process.argv[2]);
 
 export { createI18n };

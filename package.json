@@ -16,9 +16,6 @@
     "lodash-es": "^4.17.21",
     "prettier": "^3.1.0"
   },
-  "scripts": {
-    "i18n": "ts-node ./index.mts"
-  },
   "bin": {
     "i18n": "bin/cli.js"
   },
