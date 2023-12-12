@@ -20,6 +20,7 @@
     "i18n": "bin/cli.js"
   },
   "files": [
-    "cli"
+    "cli",
+    "dist"
   ]
 }
