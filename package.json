@@ -5,7 +5,7 @@
   "main": "index.mts",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.10.1",
+    "@types/node": "^20.10.4",
     "typescript": "^5.3.2"
   },
   "dependencies": {
