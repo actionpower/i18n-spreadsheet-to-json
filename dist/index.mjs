@@ -67,6 +67,7 @@ export const createJsonFile = (title, locale, data) => __awaiter(void 0, void 0,
     const formattedData = JSON.stringify(data, null, 2);
     if (!fs.existsSync(`${outDir}/${locale}`)) {
         fs.mkdirSync(`${outDir}/${locale}`, { recursive: true });
+        console.log(`📁 ${outDir}/${locale} Folder created.`);
     }
     const formattedCode = yield prettier.format(formattedData, {
         filepath: `${outDir}/${locale}/${title}.json`,
@@ -78,6 +79,7 @@ const formattingAndCreateLocaleFile = (fileName, data) => {
     const formattedEn = rawDataToObjectFormatter(data, "en");
     createJsonFile(fileName, "ko", formattedKo);
     createJsonFile(fileName, "en", formattedEn);
+    console.log("✨ Done");
 };
 const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     if (fileName) {

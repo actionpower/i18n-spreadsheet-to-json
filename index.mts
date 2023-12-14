@@ -105,6 +105,7 @@ export const createJsonFile = async (
 
   if (!fs.existsSync(`${outDir}/${locale}`)) {
     fs.mkdirSync(`${outDir}/${locale}`, { recursive: true });
+    console.log(`📁 ${outDir}/${locale} Folder created.`);
   }
 
   const formattedCode = await prettier.format(formattedData, {
@@ -118,6 +119,7 @@ const formattingAndCreateLocaleFile = (fileName: string, data: string[][]) => {
   const formattedEn = rawDataToObjectFormatter(data, "en");
   createJsonFile(fileName, "ko", formattedKo);
   createJsonFile(fileName, "en", formattedEn);
+  console.log("✨ Done");
 };
 
 const createI18n = async (fileName?: string) => {
