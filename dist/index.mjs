@@ -18,7 +18,7 @@ const columnOfLocale = {
     en: 2,
 };
 const configString = fs.readFileSync("i18nconfig.json", "utf8");
-const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, outDir } = JSON.parse(configString);
+const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir } = JSON.parse(configString);
 const rawDataToObjectFormatter = (rawDatas, locale) => rawDatas
     .map((rawData) => {
     const keyPath = rawData[columnOfKeys];
@@ -65,14 +65,15 @@ const getAllData = (rangesParams) => __awaiter(void 0, void 0, void 0, function*
 });
 export const createJsonFile = (title, locale, data) => __awaiter(void 0, void 0, void 0, function* () {
     const formattedData = JSON.stringify(data, null, 2);
-    if (!fs.existsSync(`${outDir}/${locale}`)) {
-        fs.mkdirSync(`${outDir}/${locale}`, { recursive: true });
-        console.log(`📁 ${outDir}/${locale} Folder created.`);
+    const targetDirectory = targetDir !== null && targetDir !== void 0 ? targetDir : "locales";
+    if (!fs.existsSync(`${targetDirectory}/${locale}`)) {
+        fs.mkdirSync(`${targetDirectory}/${locale}`, { recursive: true });
+        console.log(`📁 ${targetDirectory}/${locale} Folder created.`);
     }
     const formattedCode = yield prettier.format(formattedData, {
-        filepath: `${outDir}/${locale}/${title}.json`,
+        filepath: `${targetDirectory}/${locale}/${title}.json`,
     });
-    fs.writeFileSync(`${outDir}/${locale}/${title}.json`, formattedCode, "utf-8");
+    fs.writeFileSync(`${targetDirectory}/${locale}/${title}.json`, formattedCode, "utf-8");
 });
 const formattingAndCreateLocaleFile = (fileName, data) => {
     const formattedKo = rawDataToObjectFormatter(data, "ko");
