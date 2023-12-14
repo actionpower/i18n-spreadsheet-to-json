@@ -33,6 +33,9 @@ const columnOfLocale = {
   en: 2,
 };
 
+const configString = fs.readFileSync("i18nconfig.json", "utf8");
+const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, outDir } = JSON.parse(configString);
+
 const rawDataToObjectFormatter = (
   rawDatas: string[][],
   locale: keyof typeof columnOfLocale
@@ -50,44 +53,47 @@ const rawDataToObjectFormatter = (
     );
 
 const getI18nMetaFromSpreedSheet = async () => {
-  const configString = fs.readFileSync("i18nconfig.json", "utf8");
-  const config = JSON.parse(configString);
-
-  const response = await axios.get(
-    `${GOOGLE_SHEET_BASE_URL}/${config.GOOGLE_SHEET_ID}?key=${config.GOOGLE_API_KEY}`
-  );
-  return response.data;
+  try {
+    const response = await axios.get(
+      `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}?key=${GOOGLE_API_KEY}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.log(error.response.data.error);
+  }
 };
 
 const getI18nDataFromSheet = async (fileName: string) => {
-  const configString = fs.readFileSync("i18nconfig.json", "utf8");
-  const config = JSON.parse(configString);
-
-  const GOOGLE_SHEET_ID = config.GOOGLE_SHEET_ID;
-  const response = await axios.get(
-    `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:C`,
-    {
-      params: {
-        key: config.GOOGLE_API_KEY,
-        valueRenderOption: "FORMATTED_VALUE",
-      },
-    }
-  );
-  return response.data.values;
+  try {
+    const response = await axios.get(
+      `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:C`,
+      {
+        params: {
+          key: GOOGLE_API_KEY,
+          valueRenderOption: "FORMATTED_VALUE",
+        },
+      }
+    );
+    return response.data.values;
+  } catch (error: any) {
+    console.log(error.response.data.error);
+  }
 };
 
 const getAllData = async (rangesParams: string) => {
-  const configString = fs.readFileSync("i18nconfig.json", "utf8");
-  const config = JSON.parse(configString);
-  const response = await axios.get(
-    `${GOOGLE_SHEET_BASE_URL}/${config.GOOGLE_SHEET_ID}/values:batchGet?${rangesParams}`,
-    {
-      params: {
-        key: config.GOOGLE_API_KEY,
-      },
-    }
-  );
-  return response.data;
+  try {
+    const response = await axios.get(
+      `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values:batchGet?${rangesParams}`,
+      {
+        params: {
+          key: GOOGLE_API_KEY,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.log(error.response.data.error);
+  }
 };
 
 export const createJsonFile = async (
@@ -96,13 +102,18 @@ export const createJsonFile = async (
   data: LocaleData
 ) => {
   const formattedData = JSON.stringify(data, null, 2);
+
+  if (!fs.existsSync(`${outDir}/${locale}`)) {
+    fs.mkdirSync(`${outDir}/${locale}`, { recursive: true });
+  }
+
   const formattedCode = await prettier.format(formattedData, {
-    filepath: `./${locale}/${title}.json`,
+    filepath: `${outDir}/${locale}/${title}.json`,
   });
-  fs.writeFileSync(`./${locale}/${title}.json`, formattedCode, "utf-8");
+  fs.writeFileSync(`${outDir}/${locale}/${title}.json`, formattedCode, "utf-8");
 };
 
-const formattingAndCreateLocaleFile = (fileName: string, data: any) => {
+const formattingAndCreateLocaleFile = (fileName: string, data: string[][]) => {
   const formattedKo = rawDataToObjectFormatter(data, "ko");
   const formattedEn = rawDataToObjectFormatter(data, "en");
   createJsonFile(fileName, "ko", formattedKo);
@@ -112,6 +123,9 @@ const formattingAndCreateLocaleFile = (fileName: string, data: any) => {
 const createI18n = async (fileName?: string) => {
   if (fileName) {
     const i18nArrayData = await getI18nDataFromSheet(fileName);
+
+    if (i18nArrayData === undefined) return;
+
     formattingAndCreateLocaleFile(fileName, i18nArrayData);
     return;
   }
