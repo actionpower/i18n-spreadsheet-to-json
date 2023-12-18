@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import axios from "axios";
 import fs from "fs";
 import prettier from "prettier";
-import { merge, setWith } from "lodash-es";
+import _ from "lodash";
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 const columnOfKeys = 0;
 const columnOfLocale = {
@@ -23,10 +23,10 @@ const rawDataToObjectFormatter = (rawDatas, locale) => rawDatas
     .map((rawData) => {
     const keyPath = rawData[columnOfKeys];
     const value = rawData[columnOfLocale[locale]] || "";
-    return setWith({}, keyPath, value);
+    return _.setWith({}, keyPath, value);
 })
     .reverse()
-    .reduce((acc, localeObject) => merge(localeObject, acc), {});
+    .reduce((acc, localeObject) => _.merge(localeObject, acc), {});
 const getI18nMetaFromSpreedSheet = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}?key=${GOOGLE_API_KEY}`);
@@ -80,7 +80,7 @@ const formattingAndCreateLocaleFile = (fileName, data) => {
     const formattedEn = rawDataToObjectFormatter(data, "en");
     createJsonFile(fileName, "ko", formattedKo);
     createJsonFile(fileName, "en", formattedEn);
-    console.log("✨ Done");
+    console.log("✨ Update", fileName);
 };
 const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     if (fileName) {
@@ -102,4 +102,4 @@ const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () 
         formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
     });
 });
-export { createI18n };
+export { rawDataToObjectFormatter, createI18n };

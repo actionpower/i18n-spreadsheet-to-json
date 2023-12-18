@@ -1,7 +1,7 @@
 import axios from "axios";
 import fs from "fs";
 import prettier from "prettier";
-import { merge, setWith } from "lodash-es";
+import _ from "lodash";
 
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 
@@ -44,11 +44,11 @@ const rawDataToObjectFormatter = (
     .map((rawData) => {
       const keyPath = rawData[columnOfKeys];
       const value = rawData[columnOfLocale[locale]] || "";
-      return setWith({} as LocaleData, keyPath, value);
+      return _.setWith({} as LocaleData, keyPath, value);
     })
     .reverse()
     .reduce(
-      (acc: LocaleData, localeObject: LocaleData) => merge(localeObject, acc),
+      (acc: LocaleData, localeObject: LocaleData) => _.merge(localeObject, acc),
       {} as LocaleData
     );
 
@@ -124,7 +124,7 @@ const formattingAndCreateLocaleFile = (fileName: string, data: string[][]) => {
   const formattedEn = rawDataToObjectFormatter(data, "en");
   createJsonFile(fileName, "ko", formattedKo);
   createJsonFile(fileName, "en", formattedEn);
-  console.log("✨ Done");
+  console.log("✨ Update", fileName);
 };
 
 const createI18n = async (fileName?: string) => {
@@ -151,4 +151,4 @@ const createI18n = async (fileName?: string) => {
   });
 };
 
-export { createI18n };
+export { rawDataToObjectFormatter, createI18n };

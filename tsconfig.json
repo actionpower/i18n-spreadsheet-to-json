@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es6" /* 최신 브라우저는 es6을 대부분 지원한다. */,
-    "module": "ES2015",
-    "moduleResolution": "node",
+    "target": "ES2015" /* 최신 브라우저는 es6을 대부분 지원한다. */,
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "lib": [
       "es5",
       "es6",
@@ -12,7 +12,7 @@
     "outDir": "dist" /* 컴파일된 결과물을 어디에 저장할지에 대한 것을 명시해 준다. */,
     "strict": true /* 타입스크립트의 엄격한 모드를 활성화한다. */,
     "esModuleInterop": true,
-    "types": ["node"]
+    "types": ["node", "jest", "@types/lodash"]
   },
   "include": ["index.mts"],
   "exclude": ["node_modules"],
