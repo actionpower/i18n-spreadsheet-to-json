@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import axios from "axios";
 import fs from "fs";
 import prettier from "prettier";
-import _ from "lodash";
+import merge from "lodash.merge";
+import setWith from "lodash.setwith";
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 const columnOfKeys = 0;
 const columnOfLocale = {
@@ -23,10 +24,13 @@ const rawDataToObjectFormatter = (rawDatas, locale) => rawDatas
     .map((rawData) => {
     const keyPath = rawData[columnOfKeys];
     const value = rawData[columnOfLocale[locale]] || "";
-    return _.setWith({}, keyPath, value);
+    if (!keyPath || (keyPath === null || keyPath === void 0 ? void 0 : keyPath.startsWith("//"))) {
+        return {};
+    }
+    return setWith({}, keyPath, value);
 })
     .reverse()
-    .reduce((acc, localeObject) => _.merge(localeObject, acc), {});
+    .reduce((acc, localeObject) => merge(localeObject, acc), {});
 const getI18nMetaFromSpreedSheet = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}?key=${GOOGLE_API_KEY}`);
@@ -85,8 +89,9 @@ const formattingAndCreateLocaleFile = (fileName, data) => {
 const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     if (fileName) {
         const i18nArrayData = yield getI18nDataFromSheet(fileName);
-        if (i18nArrayData === undefined)
+        if (!i18nArrayData) {
             return;
+        }
         formattingAndCreateLocaleFile(fileName, i18nArrayData);
         return;
     }
@@ -99,6 +104,9 @@ const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () 
         .join("&");
     const { valueRanges: sheetsValues } = yield getAllData(rangesParams);
     sheetsValues.forEach((sheetsValue, index) => {
+        if (!sheetsValue.values) {
+            return;
+        }
         formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
     });
 });

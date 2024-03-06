@@ -1,7 +1,8 @@
 import axios from "axios";
 import fs from "fs";
 import prettier from "prettier";
-import _ from "lodash";
+import merge from "lodash.merge";
+import setWith from "lodash.setwith";
 
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 
@@ -20,7 +21,7 @@ type Sheet = {
 type SheetValue = {
   range: string;
   majorDimension: "ROWS" | "COLUMNS";
-  values: string[][];
+  values: string[][] | undefined;
 };
 
 type LocaleData = {
@@ -38,24 +39,28 @@ const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir } = JSON.parse(configString);
 
 const rawDataToObjectFormatter = (
   rawDatas: string[][],
-  locale: keyof typeof columnOfLocale
+  locale: keyof typeof columnOfLocale,
 ) =>
   rawDatas
     .map((rawData) => {
       const keyPath = rawData[columnOfKeys];
       const value = rawData[columnOfLocale[locale]] || "";
-      return _.setWith({} as LocaleData, keyPath, value);
+      if (!keyPath || keyPath?.startsWith("//")) {
+        return {};
+      }
+
+      return setWith({} as LocaleData, keyPath, value);
     })
     .reverse()
     .reduce(
-      (acc: LocaleData, localeObject: LocaleData) => _.merge(localeObject, acc),
-      {} as LocaleData
+      (acc: LocaleData, localeObject: LocaleData) => merge(localeObject, acc),
+      {} as LocaleData,
     );
 
 const getI18nMetaFromSpreedSheet = async () => {
   try {
     const response = await axios.get(
-      `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}?key=${GOOGLE_API_KEY}`
+      `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}?key=${GOOGLE_API_KEY}`,
     );
     return response.data;
   } catch (error: any) {
@@ -72,7 +77,7 @@ const getI18nDataFromSheet = async (fileName: string) => {
           key: GOOGLE_API_KEY,
           valueRenderOption: "FORMATTED_VALUE",
         },
-      }
+      },
     );
     return response.data.values;
   } catch (error: any) {
@@ -88,7 +93,7 @@ const getAllData = async (rangesParams: string) => {
         params: {
           key: GOOGLE_API_KEY,
         },
-      }
+      },
     );
     return response.data;
   } catch (error: any) {
@@ -99,7 +104,7 @@ const getAllData = async (rangesParams: string) => {
 export const createJsonFile = async (
   title: string,
   locale: keyof typeof columnOfLocale,
-  data: LocaleData
+  data: LocaleData,
 ) => {
   const formattedData = JSON.stringify(data, null, 2);
   const targetDirectory = targetDir ?? "locales";
@@ -115,7 +120,7 @@ export const createJsonFile = async (
   fs.writeFileSync(
     `${targetDirectory}/${locale}/${title}.json`,
     formattedCode,
-    "utf-8"
+    "utf-8",
   );
 };
 
@@ -130,8 +135,10 @@ const formattingAndCreateLocaleFile = (fileName: string, data: string[][]) => {
 const createI18n = async (fileName?: string) => {
   if (fileName) {
     const i18nArrayData = await getI18nDataFromSheet(fileName);
-
-    if (i18nArrayData === undefined) return;
+ 
+    if (!i18nArrayData) {
+      return;
+    }
 
     formattingAndCreateLocaleFile(fileName, i18nArrayData);
     return;
@@ -147,6 +154,9 @@ const createI18n = async (fileName?: string) => {
   const { valueRanges: sheetsValues } = await getAllData(rangesParams);
 
   sheetsValues.forEach((sheetsValue: SheetValue, index: number) => {
+    if (!sheetsValue.values) {
+      return;
+    }
     formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
   });
 };
