@@ -29,22 +29,39 @@ type LocaleData = {
 };
 
 const columnOfKeys = 0;
-const columnOfLocale = {
-  ko: 1,
-  en: 2,
+type ParseConfig = {
+  GOOGLE_API_KEY: string;
+  GOOGLE_SHEET_ID: string;
+  targetDir: string;
+  languages: string[];
 };
 
-const configString = fs.readFileSync("i18nconfig.json", "utf8");
-const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir } = JSON.parse(configString);
+const parseConfig = (): ParseConfig => {
+  const configString = fs.readFileSync("i18nconfig.json", "utf8");
 
-const rawDataToObjectFormatter = (
-  rawDatas: string[][],
-  locale: keyof typeof columnOfLocale,
-) =>
+  const config = JSON.parse(configString);
+  const defaultLanguages = ["ko", "en"];
+
+  if (!config.languages) {
+    return { ...config, languages: defaultLanguages } as ParseConfig;
+  }
+
+  if (!Array.isArray(config.languages)) {
+    throw new Error(
+      "🛑 Please check the 'languages' field in the i18nconfig file, it must be an array",
+    );
+  }
+
+  return { ...config } as ParseConfig;
+};
+
+const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir, languages } = parseConfig();
+
+const rawDataToObjectFormatter = (rawDatas: string[][], locale: string) =>
   rawDatas
     .map((rawData) => {
       const keyPath = rawData[columnOfKeys];
-      const value = rawData[columnOfLocale[locale]] || "";
+      const value = rawData[languages.indexOf(locale) + 1] || "";
       if (!keyPath || keyPath?.startsWith("//")) {
         return {};
       }
@@ -103,7 +120,7 @@ const getAllData = async (rangesParams: string) => {
 
 export const createJsonFile = async (
   title: string,
-  locale: keyof typeof columnOfLocale,
+  locale: string,
   data: LocaleData,
 ) => {
   const formattedData = JSON.stringify(data, null, 2);
@@ -125,22 +142,22 @@ export const createJsonFile = async (
 };
 
 const formattingAndCreateLocaleFile = (fileName: string, data: string[][]) => {
-  const formattedKo = rawDataToObjectFormatter(data, "ko");
-  const formattedEn = rawDataToObjectFormatter(data, "en");
-  createJsonFile(fileName, "ko", formattedKo);
-  createJsonFile(fileName, "en", formattedEn);
-  console.log("✨ Update", fileName);
+  languages.forEach((locale) => {
+    const formattedData = rawDataToObjectFormatter(data, locale);
+    createJsonFile(fileName, locale, formattedData);
+  });
 };
 
 const createI18n = async (fileName?: string) => {
   if (fileName) {
     const i18nArrayData = await getI18nDataFromSheet(fileName);
- 
+
     if (!i18nArrayData) {
       return;
     }
 
     formattingAndCreateLocaleFile(fileName, i18nArrayData);
+    console.log("✨ Updated", fileName);
     return;
   }
 
@@ -159,6 +176,7 @@ const createI18n = async (fileName?: string) => {
     }
     formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
   });
+  console.log("✨ Updated all sheets.");
 };
 
 export { rawDataToObjectFormatter, createI18n };

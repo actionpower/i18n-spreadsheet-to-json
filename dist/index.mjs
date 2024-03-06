@@ -14,16 +14,23 @@ import merge from "lodash.merge";
 import setWith from "lodash.setwith";
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 const columnOfKeys = 0;
-const columnOfLocale = {
-    ko: 1,
-    en: 2,
+const parseConfig = () => {
+    const configString = fs.readFileSync("i18nconfig.json", "utf8");
+    const config = JSON.parse(configString);
+    const defaultLanguages = ["ko", "en"];
+    if (!config.languages) {
+        return Object.assign(Object.assign({}, config), { languages: defaultLanguages });
+    }
+    if (!Array.isArray(config.languages)) {
+        throw new Error("🛑 Please check the 'languages' field in the i18nconfig file, it must be an array");
+    }
+    return Object.assign({}, config);
 };
-const configString = fs.readFileSync("i18nconfig.json", "utf8");
-const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir } = JSON.parse(configString);
+const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir, languages } = parseConfig();
 const rawDataToObjectFormatter = (rawDatas, locale) => rawDatas
     .map((rawData) => {
     const keyPath = rawData[columnOfKeys];
-    const value = rawData[columnOfLocale[locale]] || "";
+    const value = rawData[languages.indexOf(locale) + 1] || "";
     if (!keyPath || (keyPath === null || keyPath === void 0 ? void 0 : keyPath.startsWith("//"))) {
         return {};
     }
@@ -80,11 +87,10 @@ export const createJsonFile = (title, locale, data) => __awaiter(void 0, void 0,
     fs.writeFileSync(`${targetDirectory}/${locale}/${title}.json`, formattedCode, "utf-8");
 });
 const formattingAndCreateLocaleFile = (fileName, data) => {
-    const formattedKo = rawDataToObjectFormatter(data, "ko");
-    const formattedEn = rawDataToObjectFormatter(data, "en");
-    createJsonFile(fileName, "ko", formattedKo);
-    createJsonFile(fileName, "en", formattedEn);
-    console.log("✨ Update", fileName);
+    languages.forEach((locale) => {
+        const formattedData = rawDataToObjectFormatter(data, locale);
+        createJsonFile(fileName, locale, formattedData);
+    });
 };
 const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     if (fileName) {
@@ -93,6 +99,7 @@ const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () 
             return;
         }
         formattingAndCreateLocaleFile(fileName, i18nArrayData);
+        console.log("✨ Updated", fileName);
         return;
     }
     const { sheets } = yield getI18nMetaFromSpreedSheet();
@@ -109,5 +116,6 @@ const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () 
         }
         formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
     });
+    console.log("✨ Updated all sheets.");
 });
 export { rawDataToObjectFormatter, createI18n };
