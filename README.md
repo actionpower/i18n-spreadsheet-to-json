@@ -1,3 +1,5 @@
+# i18n-spreadsheet-to-json
+
 Google Sheets 데이터를 파싱하여 JSON 파일을 생성 및 동기화하는 기능을 제공합니다.
 여러 언어를 지원하는 애플리케이션을 위한 국제화(i18n)를 도와줍니다.
 
@@ -33,7 +35,7 @@ yarn add i18n-spreadsheet-to-json --dev
 | 변수                | 설명                                                                                         | 필수 여부 | 기본값       |
 | ------------------- | -------------------------------------------------------------------------------------------- | --------- | ------------ |
 | **GOOGLE_API_KEY**  | Google Sheets API를 사용하기 위한 API 키입니다. [발급방법](https://developers.google.com/maps/documentation/javascript/get-api-key)                                              | required  | -            |
-| **GOOGLE_SHEET_ID** | 데이터를 가져올 Google Sheets 문서의 ID입니다. spreadSheets의 url을 통해 ID를 알 수 있습니다.  <b>docs.google.com/spreadsheets/d/<span style="color: #2D3748; background-color:#fff5b1;">[GOOGLE_SHEET_ID]</span>/edit?usp=sharing</b>                                     | required  | -            |
+| **GOOGLE_SHEET_ID** | 데이터를 가져올 Google Sheets 문서의 ID입니다. spreadSheets의 url을 통해 ID를 알 수 있습니다.  docs.google.com/spreadsheets/d/<b>[GOOGLE_SHEET_ID]</b>/edit?usp=sharing                                     | required  | -            |
 | **targetDir**       | 파싱된 JSON 파일이 저장될 디렉토리 경로입니다.                                               | required  | -            |
 | **languages**       | 지원하는 언어 코드의 배열입니다. 각 언어 코드에 해당하는 JSON 파일이 targetDir에 생성됩니다. | optional  | ["ko", "en"] |
 
