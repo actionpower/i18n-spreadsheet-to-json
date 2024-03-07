@@ -56,8 +56,9 @@ i18n [sheetName]
 ## Example
 
 - 스프레드 시트를 작성합니다. <I>⚠공유 엑세스 권한이 링크가 있는 모든 사용자(뷰어)로 되어있는지 확인해주세요. 제한됨으로 되어있으면 api 요청이 불가능합니다.</I>
+<img width="841" alt="스크린샷 2024-03-07 오후 3 09 22" src="https://github.com/actionpower/i18n-spreadsheet-to-json/assets/148043951/e6364bfc-d998-4772-b123-90e6143a12d2">
 
-<img width="841" src="./image/sheetExample.png">
+
 
 - 프로젝트 경로에서 터미널을 열고 `i18n [sheetName]` 명령어를 입력하면 `i18nconfig.json` 파일에 지정한 `targetDir` 경로에 `[sheetName].json`파일이 생성됩니다.
 
