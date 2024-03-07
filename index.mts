@@ -85,10 +85,15 @@ const getI18nMetaFromSpreedSheet = async () => {
   }
 };
 
+const  numberToAlphabet = (number:number) =>  {
+  return String.fromCharCode(64 + number);
+}
+
 const getI18nDataFromSheet = async (fileName: string) => {
+  const cellColumn = numberToAlphabet(languages.length + 1);
   try {
     const response = await axios.get(
-      `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:C`,
+      `${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:${cellColumn}`,
       {
         params: {
           key: GOOGLE_API_KEY,

@@ -47,9 +47,13 @@ const getI18nMetaFromSpreedSheet = () => __awaiter(void 0, void 0, void 0, funct
         console.log(error.response.data.error);
     }
 });
+const numberToAlphabet = (number) => {
+    return String.fromCharCode(64 + number);
+};
 const getI18nDataFromSheet = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
+    const cellColumn = numberToAlphabet(languages.length + 1);
     try {
-        const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:C`, {
+        const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:${cellColumn}`, {
             params: {
                 key: GOOGLE_API_KEY,
                 valueRenderOption: "FORMATTED_VALUE",
