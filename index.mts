@@ -29,6 +29,7 @@ type LocaleData = {
 };
 
 const columnOfKeys = 0;
+const NON_VALUE = "_N/A";
 type ParseConfig = {
   GOOGLE_API_KEY: string;
   GOOGLE_SHEET_ID: string;
@@ -62,7 +63,7 @@ const rawDataToObjectFormatter = (rawDatas: string[][], locale: string) =>
     .map((rawData) => {
       const keyPath = rawData[columnOfKeys];
       const value = rawData[languages.indexOf(locale) + 1] || "";
-      if (!keyPath || keyPath?.startsWith("//")) {
+      if (!keyPath || keyPath?.startsWith("//") || value === NON_VALUE) {
         return {};
       }
 
@@ -85,9 +86,9 @@ const getI18nMetaFromSpreedSheet = async () => {
   }
 };
 
-const  numberToAlphabet = (number:number) =>  {
+const numberToAlphabet = (number: number) => {
   return String.fromCharCode(64 + number);
-}
+};
 
 const getI18nDataFromSheet = async (fileName: string) => {
   const cellColumn = numberToAlphabet(languages.length + 1);

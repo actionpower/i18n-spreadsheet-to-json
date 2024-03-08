@@ -14,6 +14,7 @@ import merge from "lodash.merge";
 import setWith from "lodash.setwith";
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 const columnOfKeys = 0;
+const NON_VALUE = "_N/A";
 const parseConfig = () => {
     const configString = fs.readFileSync("i18nconfig.json", "utf8");
     const config = JSON.parse(configString);
@@ -31,7 +32,7 @@ const rawDataToObjectFormatter = (rawDatas, locale) => rawDatas
     .map((rawData) => {
     const keyPath = rawData[columnOfKeys];
     const value = rawData[languages.indexOf(locale) + 1] || "";
-    if (!keyPath || (keyPath === null || keyPath === void 0 ? void 0 : keyPath.startsWith("//"))) {
+    if (!keyPath || (keyPath === null || keyPath === void 0 ? void 0 : keyPath.startsWith("//")) || value === NON_VALUE) {
         return {};
     }
     return setWith({}, keyPath, value);
