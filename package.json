@@ -4,6 +4,13 @@
   "type": "module",
   "main": "index.mts",
   "license": "MIT",
+  "description": "Converts a Google Sheets spreadsheet to a JSON file",
+  "keywords": [
+    "i18n",
+    "spreadsheet",
+    "json"
+  ],
+  "author": "Action Power",
   "devDependencies": {
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-typescript": "^7.23.3",
