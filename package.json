@@ -1,7 +1,8 @@
 {
-  "name": "i18n-spreadsheet-to-json",
+  "name": "@actionpower/i18n-spreadsheet-to-json",
   "version": "0.0.19",
   "type": "module",
+  "private": "false",
   "main": "index.mts",
   "license": "MIT",
   "devDependencies": {
@@ -21,6 +22,13 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
     "typescript": "^4.4.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/actionpower/i18n-spreadsheet-to-json.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "dependencies": {
     "axios": "^1.6.2"
