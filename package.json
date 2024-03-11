@@ -24,10 +24,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/actionpower/i18n-spreadsheet-to-json.git"
+    "url": "https://github.com/actionpower/i18n-spreadsheet-to-json"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/actionpower"
+    "registry": "https://npm.pkg.github.com"
   },
   "dependencies": {
     "axios": "^1.6.2"
