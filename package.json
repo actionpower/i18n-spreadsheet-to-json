@@ -27,10 +27,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/actionpower/i18n-spreadsheet-to-json"
-  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
