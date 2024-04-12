@@ -6,11 +6,11 @@ Google Sheets 데이터를 파싱하여 JSON 파일을 생성 및 동기화하�
 ## 설치
 
 ```bash
-npm install i18n-spreadsheet-to-json --save-dev
+npm install @actionpower/i18n-spreadsheet-to-json --save-dev
 ```
 
 ```bash
-yarn add i18n-spreadsheet-to-json --dev
+yarn add @actionpower/i18n-spreadsheet-to-json --dev
 ```
 
 ## 사용법
@@ -32,12 +32,12 @@ yarn add i18n-spreadsheet-to-json --dev
 
 ```
 
-| 변수                | 설명                                                                                         | 필수 여부 | 기본값       |
-| ------------------- | -------------------------------------------------------------------------------------------- | --------- | ------------ |
-| **GOOGLE_API_KEY**  | Google Sheets API를 사용하기 위한 API 키입니다. [발급방법](https://developers.google.com/maps/documentation/javascript/get-api-key)                                              | required  | -            |
-| **GOOGLE_SHEET_ID** | 데이터를 가져올 Google Sheets 문서의 ID입니다. spreadSheets의 url을 통해 ID를 알 수 있습니다.  docs.google.com/spreadsheets/d/<b>[GOOGLE_SHEET_ID]</b>/edit?usp=sharing                                     | required  | -            |
-| **targetDir**       | 파싱된 JSON 파일이 저장될 디렉토리 경로입니다.                                               | required  | -            |
-| **languages**       | 지원하는 언어 코드의 배열입니다. 각 언어 코드에 해당하는 JSON 파일이 targetDir에 생성됩니다. | optional  | ["ko", "en"] |
+| 변수                | 설명                                                                                                                                                                   | 필수 여부 | 기본값       |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------ |
+| **GOOGLE_API_KEY**  | Google Sheets API를 사용하기 위한 API 키입니다. [발급방법](https://developers.google.com/maps/documentation/javascript/get-api-key)                                    | required  | -            |
+| **GOOGLE_SHEET_ID** | 데이터를 가져올 Google Sheets 문서의 ID입니다. spreadSheets의 url을 통해 ID를 알 수 있습니다. docs.google.com/spreadsheets/d/<b>[GOOGLE_SHEET_ID]</b>/edit?usp=sharing | required  | -            |
+| **targetDir**       | 파싱된 JSON 파일이 저장될 디렉토리 경로입니다.                                                                                                                         | required  | -            |
+| **languages**       | 지원하는 언어 코드의 배열입니다. 각 언어 코드에 해당하는 JSON 파일이 targetDir에 생성됩니다.                                                                           | optional  | ["ko", "en"] |
 
 ### 실행
 
@@ -56,9 +56,7 @@ i18n [sheetName]
 ## Example
 
 - 스프레드 시트를 작성합니다. <I>⚠공유 엑세스 권한이 링크가 있는 모든 사용자(뷰어)로 되어있는지 확인해주세요. 제한됨으로 되어있으면 api 요청이 불가능합니다.</I>
-<img width="841" alt="스크린샷 2024-03-07 오후 3 09 22" src="https://github.com/actionpower/i18n-spreadsheet-to-json/assets/148043951/e6364bfc-d998-4772-b123-90e6143a12d2">
-
-
+  <img width="841" alt="스크린샷 2024-03-07 오후 3 09 22" src="https://github.com/actionpower/i18n-spreadsheet-to-json/assets/148043951/e6364bfc-d998-4772-b123-90e6143a12d2">
 
 - 프로젝트 경로에서 터미널을 열고 `i18n [sheetName]` 명령어를 입력하면 `i18nconfig.json` 파일에 지정한 `targetDir` 경로에 `[sheetName].json`파일이 생성됩니다.
 

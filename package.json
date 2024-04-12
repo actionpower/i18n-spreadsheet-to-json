@@ -28,7 +28,7 @@
     "typescript": "^5.4.3"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
     "axios": "^1.6.2",
@@ -38,6 +38,7 @@
   "bin": {
     "i18n": "bin/cli.js"
   },
+  "private": false,
   "files": [
     "cli",
     "dist"
