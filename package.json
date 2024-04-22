@@ -10,6 +10,10 @@
     "spreadsheet",
     "json"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/actionpower/i18n-spreadsheet-to-json.git"
+  },
   "author": "Action Power",
   "devDependencies": {
     "@babel/preset-env": "^7.23.6",
