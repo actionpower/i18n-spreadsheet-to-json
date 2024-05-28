@@ -98,6 +98,11 @@ const formattingAndCreateLocaleFile = (fileName, data) => {
     });
 };
 const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
+    const { sheets } = yield getI18nMetaFromSpreedSheet();
+    const sheetTitles = sheets.map((sheet) => sheet.properties.title);
+    if (fileName !== undefined && !sheetTitles.includes(fileName)) {
+        throw new Error("🛑 Please check the sheet name. The sheet name should be on the spreadsheet list.");
+    }
     if (fileName) {
         const i18nArrayData = yield getI18nDataFromSheet(fileName);
         if (!i18nArrayData) {
@@ -107,8 +112,6 @@ const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () 
         console.log("✨ Updated", fileName);
         return;
     }
-    const { sheets } = yield getI18nMetaFromSpreedSheet();
-    const sheetTitles = sheets.map((sheet) => sheet.properties.title);
     const rangesParams = sheetTitles
         .map((sheetTitle) => {
         return `ranges=${sheetTitle}!A2:C`;
