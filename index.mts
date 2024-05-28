@@ -155,6 +155,15 @@ const formattingAndCreateLocaleFile = (fileName: string, data: string[][]) => {
 };
 
 const createI18n = async (fileName?: string) => {
+  const { sheets } = await getI18nMetaFromSpreedSheet();
+  const sheetTitles = sheets.map((sheet: Sheet) => sheet.properties.title);
+
+  if (fileName !== undefined && !sheetTitles.includes(fileName)) {
+    throw new Error(
+      "🛑 Please check the sheet name. The sheet name should be on the spreadsheet list.",
+    );
+  }
+
   if (fileName) {
     const i18nArrayData = await getI18nDataFromSheet(fileName);
 
@@ -167,8 +176,7 @@ const createI18n = async (fileName?: string) => {
     return;
   }
 
-  const { sheets } = await getI18nMetaFromSpreedSheet();
-  const sheetTitles = sheets.map((sheet: Sheet) => sheet.properties.title);
+
   const rangesParams = sheetTitles
     .map((sheetTitle: string) => {
       return `ranges=${sheetTitle}!A2:C`;
