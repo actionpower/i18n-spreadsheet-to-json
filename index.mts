@@ -179,7 +179,7 @@ const createI18n = async (fileName?: string) => {
 
   const rangesParams = sheetTitles
     .map((sheetTitle: string) => {
-      return `ranges=${sheetTitle}!A2:C`;
+      return `ranges=${sheetTitle}!A2:${numberToAlphabet(languages.length + 1)}`;
     })
     .join("&");
   const { valueRanges: sheetsValues } = await getAllData(rangesParams);
