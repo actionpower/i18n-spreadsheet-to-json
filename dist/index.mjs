@@ -114,7 +114,7 @@ const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () 
     }
     const rangesParams = sheetTitles
         .map((sheetTitle) => {
-        return `ranges=${sheetTitle}!A2:C`;
+        return `ranges=${sheetTitle}!A2:${numberToAlphabet(languages.length + 1)}`;
     })
         .join("&");
     const { valueRanges: sheetsValues } = yield getAllData(rangesParams);
