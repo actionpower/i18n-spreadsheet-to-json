@@ -110,6 +110,11 @@ yarn i18n [sheetName]
 
 ```
 
+# Bug Fixes
+<b>[2024/10/14] version 0.0.34</b>
+
+Resolved an issue where updating sheet values in bulk through the `i18n` command resulted in only two languages being reflected correctly in Google Sheets. Previously, when three or more languages were updated, additional languages would appear as blank values. This bug has now been fixed, ensuring that all specified languages are updated correctly.
+
 # 한국어
 
 ## 설치
@@ -212,3 +217,8 @@ yarn i18n [sheetName]
 }
 
 ```
+# 버그 수정
+<b>[2024/10/14] version 0.0.34</b>
+
+`i18n` 명령어를 통해 시트 값을 일괄 업데이트할 때 Google Sheets에서 두 개의 언어만 정상적으로 반영되는 문제를 해결했습니다. 이전에는 세 개 이상의 언어를 업데이트할 경우 추가 언어가 빈 값으로 표시되는 버그가 있었습니다. 이 버그가 수정되어 지정한 모든 언어가 올바르게 업데이트됩니다.
+
