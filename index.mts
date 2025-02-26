@@ -1,8 +1,8 @@
 import axios from "axios";
 import fs from "fs";
-import prettier from "prettier";
 import merge from "lodash.merge";
 import setWith from "lodash.setwith";
+import prettier from "prettier";
 
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 
@@ -35,6 +35,7 @@ type ParseConfig = {
   GOOGLE_SHEET_ID: string;
   targetDir: string;
   languages: string[];
+  sheetNames?: string[];
 };
 
 const parseConfig = (): ParseConfig => {
@@ -53,10 +54,16 @@ const parseConfig = (): ParseConfig => {
     );
   }
 
+  if (config.sheetNames && !Array.isArray(config.sheetNames)) {
+    throw new Error(
+      "🛑 Please check the 'sheetNames' field in the i18nconfig file, it must be an array",
+    );
+  }
+
   return { ...config } as ParseConfig;
 };
 
-const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir, languages } = parseConfig();
+const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir, languages, sheetNames } = parseConfig();
 
 const rawDataToObjectFormatter = (rawDatas: string[][], locale: string) =>
   rawDatas
@@ -156,6 +163,10 @@ const formattingAndCreateLocaleFile = (fileName: string, data: string[][]) => {
 
 const createI18n = async (fileName?: string) => {
   const { sheets } = await getI18nMetaFromSpreedSheet();
+  if (!sheets) {
+    throw new Error("🛑 Please check the GOOGLE_SHEET_ID or GOOGLE_API_KEY.");
+  }
+
   const sheetTitles = sheets.map((sheet: Sheet) => sheet.properties.title);
 
   if (fileName !== undefined && !sheetTitles.includes(fileName)) {
@@ -176,21 +187,37 @@ const createI18n = async (fileName?: string) => {
     return;
   }
 
+  const sheetsToProcess = sheetNames ? 
+    sheetTitles.filter((title: string) => sheetNames.includes(title)) : 
+    sheetTitles;
+  
+  if (sheetNames && sheetsToProcess.length !== sheetNames.length) {
+    const missingSheets = sheetNames.filter(name => !sheetTitles.includes(name));
+    console.warn(`⚠️ Warning: Some specified sheets were not found: ${missingSheets.join(', ')}`);
+  }
 
-  const rangesParams = sheetTitles
+  const rangesParams = sheetsToProcess
     .map((sheetTitle: string) => {
       return `ranges=${sheetTitle}!A2:${numberToAlphabet(languages.length + 1)}`;
     })
     .join("&");
+  
+  if (rangesParams === "") {
+    console.log("No sheets to process.");
+    return;
+  }
+
   const { valueRanges: sheetsValues } = await getAllData(rangesParams);
 
   sheetsValues.forEach((sheetsValue: SheetValue, index: number) => {
     if (!sheetsValue.values) {
       return;
     }
-    formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
+    formattingAndCreateLocaleFile(sheetsToProcess[index], sheetsValue.values);
   });
-  console.log("✨ Updated all sheets.");
+  
+  console.log(`✨ Updated ${sheetsToProcess.length} sheets: ${sheetsToProcess.join(', ')}`);
 };
 
-export { rawDataToObjectFormatter, createI18n };
+export { createI18n, rawDataToObjectFormatter };
+

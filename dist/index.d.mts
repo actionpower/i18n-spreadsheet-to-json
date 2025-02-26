@@ -4,4 +4,4 @@ type LocaleData = {
 declare const rawDataToObjectFormatter: (rawDatas: string[][], locale: string) => LocaleData;
 export declare const createJsonFile: (title: string, locale: string, data: LocaleData) => Promise<void>;
 declare const createI18n: (fileName?: string) => Promise<void>;
-export { rawDataToObjectFormatter, createI18n };
+export { createI18n, rawDataToObjectFormatter };

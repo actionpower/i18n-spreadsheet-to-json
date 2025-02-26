@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import axios from "axios";
 import fs from "fs";
-import prettier from "prettier";
 import merge from "lodash.merge";
 import setWith from "lodash.setwith";
+import prettier from "prettier";
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 const columnOfKeys = 0;
 const NON_VALUE = "_N/A";
@@ -25,9 +25,12 @@ const parseConfig = () => {
     if (!Array.isArray(config.languages)) {
         throw new Error("🛑 Please check the 'languages' field in the i18nconfig file, it must be an array");
     }
+    if (config.sheetNames && !Array.isArray(config.sheetNames)) {
+        throw new Error("🛑 Please check the 'sheetNames' field in the i18nconfig file, it must be an array");
+    }
     return Object.assign({}, config);
 };
-const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir, languages } = parseConfig();
+const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir, languages, sheetNames } = parseConfig();
 const rawDataToObjectFormatter = (rawDatas, locale) => rawDatas
     .map((rawData) => {
     const keyPath = rawData[columnOfKeys];
@@ -99,6 +102,9 @@ const formattingAndCreateLocaleFile = (fileName, data) => {
 };
 const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     const { sheets } = yield getI18nMetaFromSpreedSheet();
+    if (!sheets) {
+        throw new Error("🛑 Please check the GOOGLE_SHEET_ID or GOOGLE_API_KEY.");
+    }
     const sheetTitles = sheets.map((sheet) => sheet.properties.title);
     if (fileName !== undefined && !sheetTitles.includes(fileName)) {
         throw new Error("🛑 Please check the sheet name. The sheet name should be on the spreadsheet list.");
@@ -112,18 +118,29 @@ const createI18n = (fileName) => __awaiter(void 0, void 0, void 0, function* () 
         console.log("✨ Updated", fileName);
         return;
     }
-    const rangesParams = sheetTitles
+    const sheetsToProcess = sheetNames ?
+        sheetTitles.filter((title) => sheetNames.includes(title)) :
+        sheetTitles;
+    if (sheetNames && sheetsToProcess.length !== sheetNames.length) {
+        const missingSheets = sheetNames.filter(name => !sheetTitles.includes(name));
+        console.warn(`⚠️ Warning: Some specified sheets were not found: ${missingSheets.join(', ')}`);
+    }
+    const rangesParams = sheetsToProcess
         .map((sheetTitle) => {
         return `ranges=${sheetTitle}!A2:${numberToAlphabet(languages.length + 1)}`;
     })
         .join("&");
+    if (rangesParams === "") {
+        console.log("No sheets to process.");
+        return;
+    }
     const { valueRanges: sheetsValues } = yield getAllData(rangesParams);
     sheetsValues.forEach((sheetsValue, index) => {
         if (!sheetsValue.values) {
             return;
         }
-        formattingAndCreateLocaleFile(sheetTitles[index], sheetsValue.values);
+        formattingAndCreateLocaleFile(sheetsToProcess[index], sheetsValue.values);
     });
-    console.log("✨ Updated all sheets.");
+    console.log(`✨ Updated ${sheetsToProcess.length} sheets: ${sheetsToProcess.join(', ')}`);
 });
-export { rawDataToObjectFormatter, createI18n };
+export { createI18n, rawDataToObjectFormatter };
