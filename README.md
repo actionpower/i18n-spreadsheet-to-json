@@ -33,7 +33,8 @@ Create i18nconfig.json at the root path.
   "GOOGLE_API_KEY": "YOUR_GOOGLE_API_KEY",
   "GOOGLE_SHEET_ID": "YOUR_GOOGLE_SHEET_ID",
   "targetDir": "./locales",
-  "languages": ["ko", "en", "zh"]
+  "languages": ["ko", "en", "zh"],
+  "sheetNames": ["common"]
 }
 
 ```
@@ -44,6 +45,7 @@ Create i18nconfig.json at the root path.
 | **GOOGLE_SHEET_ID** | 데 ID of the Google Sheets document to fetch data from. You can find it in the spreadsheet's URL. docs.google.com/spreadsheets/d/<b>[GOOGLE_SHEET_ID]</b>/edit?usp=sharing | required | -            |
 | **targetDir**       | Directory path where the parsed JSON files will be saved.                                                                                                                  | required | -            |
 | **languages**       | Array of supported language codes. JSON files corresponding to each language code will be created in targetDir.                                                            | optional | ["ko", "en"] |
+| **sheetNames**       | Array of sheets that needs to be processed                                                                                                                                 | optional | - (All) |
 
 ### Execution
 
@@ -141,7 +143,8 @@ yarn add @actionpower/i18n-spreadsheet-to-json --dev
   "GOOGLE_API_KEY": "YOUR_GOOGLE_API_KEY",
   "GOOGLE_SHEET_ID": "YOUR_GOOGLE_SHEET_ID",
   "targetDir": "./locales",
-  "languages": ["ko", "en", "zh"]
+  "languages": ["ko", "en", "zh"],
+  "sheetNames": ["common"]
 }
 
 ```
@@ -152,6 +155,8 @@ yarn add @actionpower/i18n-spreadsheet-to-json --dev
 | **GOOGLE_SHEET_ID** | 데이터를 가져올 Google Sheets 문서의 ID입니다. spreadSheets의 url을 통해 ID를 알 수 있습니다. docs.google.com/spreadsheets/d/<b>[GOOGLE_SHEET_ID]</b>/edit?usp=sharing | required  | -            |
 | **targetDir**       | 파싱된 JSON 파일이 저장될 디렉토리 경로입니다.                                                                                                                         | required  | -            |
 | **languages**       | 지원하는 언어 코드의 배열입니다. 각 언어 코드에 해당하는 JSON 파일이 targetDir에 생성됩니다.                                                                           | optional  | ["ko", "en"] |
+| **sheetNames**       | 처리되어야 하는 시트 배열                                                                                                                                 | optional | - (All) |
+
 
 ### 실행
 
