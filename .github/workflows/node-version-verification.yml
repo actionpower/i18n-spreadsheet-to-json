@@ -1,0 +1,60 @@
+name: Node.js Version Verification
+
+# 이 워크플로우가 실행될 때의 트리거 조건을 정의합니다
+on:
+  # 코드가 main 브랜치로 푸시될 때 실행됩니다
+  push:
+    branches: [main]
+  # main 브랜치로 Pull Request가 생성될 때 실행됩니다
+  pull_request:
+    branches: [main]
+  # 수동으로 워크플로우를 실행할 수 있게 합니다
+  workflow_dispatch:
+
+# 실행할 작업들을 정의합니다
+jobs:
+  # 'verify' 라는 이름의 작업을 정의합니다
+  verify:
+    # 이 작업은 Ubuntu의 최신 버전에서 실행됩니다
+    runs-on: ubuntu-latest
+
+    # 테스트 전략을 정의합니다 - 여러 Node.js 버전에서 병렬로 실행
+    strategy:
+      # matrix를 사용하여 여러 조건에서 작업을 실행합니다
+      matrix:
+        # 검증할 Node.js 버전 목록을 지정합니다
+        node-version: [14.x, 16.x, 18.x, 20.x]
+
+    # 작업의 각 단계를 정의합니다
+    steps:
+      # GitHub 저장소 코드를 가져옵니다
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 지정된 Node.js 버전을 설정합니다
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          # 의존성 패키지를 캐시하여 설치 속도를 높입니다
+          cache: "yarn"
+
+      # Yarn을 사용하여 의존성 패키지를 설치합니다
+      - name: Install dependencies
+        run: yarn install
+
+      # 코드 린트 검사를 실행합니다 (린트 스크립트가 있는 경우)
+      - name: Run linting
+        run: yarn lint
+        # 린트 스크립트가 없어도 워크플로우가 실패하지 않도록 합니다
+        continue-on-error: true
+
+      # 테스트를 실행합니다
+      - name: Run tests
+        run: yarn test
+
+      # 빌드를 실행합니다 (빌드 스크립트가 있는 경우)
+      - name: Build project
+        run: yarn build
+        # 빌드 스크립트가 없어도 워크플로우가 실패하지 않도록 합니다
+        continue-on-error: true
