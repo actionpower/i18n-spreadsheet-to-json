@@ -23,7 +23,7 @@ jobs:
       # matrix를 사용하여 여러 조건에서 작업을 실행합니다
       matrix:
         # 검증할 Node.js 버전 목록을 지정합니다
-        node-version: [14.x, 16.x, 18.x, 20.x]
+        node-version: [16.x, 18.x, 20.x]
 
     # 작업의 각 단계를 정의합니다
     steps:
