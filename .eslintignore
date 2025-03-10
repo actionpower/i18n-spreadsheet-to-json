@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+build/
+jest.config.ts
+babel.config.js
+*.config.ts
+*.config.js
