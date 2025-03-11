@@ -11,50 +11,50 @@ jobs:
   # 빌드 및 테스트 실행
   build-and-test:
     name: Build and Test
-    uses: ./.github/workflows/common-workflow.yml
+    uses: ./.github/workflows/common.yml
     with:
-      node-version: '20.x' # 배포에는 단일 Node.js 버전 사용
-  
+      node-version: "20.x" # 배포에는 단일 Node.js 버전 사용
+
   # npm에 배포
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
     needs: build-and-test # 빌드 및 테스트가 성공한 후에만 실행
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           # Git 히스토리 전체를 가져오고 태그도 가져옵니다
           fetch-depth: 0
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
           cache: "yarn"
-      
+
       - name: Install dependencies
         run: yarn install
-      
+
       - name: Configure Git
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-      
+
       - name: Get latest merged PR
         id: get-pr
         uses: actions-ecosystem/action-get-merged-pull-request@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Determine version bump type
         id: version-type
         run: |
           # 기본값은 patch 버전 업데이트
           TYPE="patch"
-          
+
           # PR 라벨에 따라 버전 타입 결정
           if [[ "${{ steps.get-pr.outputs.labels }}" == *"version:minor"* ]]; then
             TYPE="minor"
@@ -63,9 +63,9 @@ jobs:
           elif [[ "${{ steps.get-pr.outputs.labels }}" == *"version:none"* ]]; then
             TYPE="none"
           fi
-          
+
           echo "TYPE=$TYPE" >> $GITHUB_OUTPUT
-      
+
       - name: Bump version
         id: version-bump
         if: steps.version-type.outputs.TYPE != 'none'
@@ -77,16 +77,16 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
           # 변경사항 푸시
           git push --follow-tags
-      
+
       - name: Build package
         run: yarn build
-      
+
       - name: Publish to npm
         if: steps.version-type.outputs.TYPE != 'none'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
+
       - name: Create GitHub Release
         if: steps.version-type.outputs.TYPE != 'none'
         uses: actions/create-release@v1
@@ -99,5 +99,5 @@ jobs:
           prerelease: false
           body: |
             ${{ steps.get-pr.outputs.title }}
-            
+
             ${{ steps.get-pr.outputs.body }}
