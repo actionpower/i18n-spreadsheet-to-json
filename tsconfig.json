@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "types": ["node", "jest", "@types/lodash.merge", "@types/lodash.setwith"]
   },
-  "include": ["index.mts", "__test__/**/*.ts"],
+  "include": ["index.mts"],
   "exclude": ["node_modules"],
   "ts-node": { "esm": true }
 }

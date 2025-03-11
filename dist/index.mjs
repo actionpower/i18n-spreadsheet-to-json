@@ -16,16 +16,34 @@ const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 const columnOfKeys = 0;
 const NON_VALUE = "_N/A";
 const parseConfig = () => {
-    const configString = fs.readFileSync("i18nconfig.json", "utf8");
-    const config = JSON.parse(configString);
-    const defaultLanguages = ["ko", "en"];
-    if (!config.languages) {
-        return Object.assign(Object.assign({}, config), { languages: defaultLanguages });
+    try {
+        const configString = fs.readFileSync("i18nconfig.json", "utf8");
+        const config = JSON.parse(configString);
+        return config;
     }
-    if (!Array.isArray(config.languages)) {
-        throw new Error("🛑 Please check the 'languages' field in the i18nconfig file, it must be an array");
+    catch (error) {
+        if (process.env.NODE_ENV === "test" || process.env.CI === "true") {
+            return {
+                GOOGLE_API_KEY: "test-api-key",
+                GOOGLE_SHEET_ID: "test-sheet-id",
+                targetDir: "./locales",
+                languages: ["ko", "en"],
+            };
+        }
+        console.error("\x1b[31m%s\x1b[0m", "Error: 🔺i18nconfig.json file not found!");
+        console.error("\x1b[33m%s\x1b[0m", "Please create an i18nconfig.json file in your project root with the following structure:");
+        console.error(`
+{
+  "GOOGLE_API_KEY": "YOUR_GOOGLE_API_KEY",
+  "GOOGLE_SHEET_ID": "YOUR_GOOGLE_SPREADSHEET_ID",
+  "targetDir": "./locales",
+  "languages": ["ko", "en"]
+}
+`);
+        console.error("\x1b[33m%s\x1b[0m", "For more information, please refer to:");
+        console.error("\x1b[36m%s\x1b[0m", "https://github.com/actionpower/i18n-spreadsheet-to-json?tab=readme-ov-file#i18nconfigjson");
+        process.exit(1);
     }
-    return Object.assign({}, config);
 };
 const { GOOGLE_API_KEY, GOOGLE_SHEET_ID, targetDir, languages } = parseConfig();
 const rawDataToObjectFormatter = (rawDatas, locale) => rawDatas
@@ -54,12 +72,7 @@ const numberToAlphabet = (number) => {
 const getI18nDataFromSheet = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     const cellColumn = numberToAlphabet(languages.length + 1);
     try {
-        const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:${cellColumn}`, {
-            params: {
-                key: GOOGLE_API_KEY,
-                valueRenderOption: "FORMATTED_VALUE",
-            },
-        });
+        const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values/${fileName}!A2:${cellColumn}`, { params: { key: GOOGLE_API_KEY, valueRenderOption: "FORMATTED_VALUE" } });
         return response.data.values;
     }
     catch (error) {
@@ -68,11 +81,7 @@ const getI18nDataFromSheet = (fileName) => __awaiter(void 0, void 0, void 0, fun
 });
 const getAllData = (rangesParams) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values:batchGet?${rangesParams}`, {
-            params: {
-                key: GOOGLE_API_KEY,
-            },
-        });
+        const response = yield axios.get(`${GOOGLE_SHEET_BASE_URL}/${GOOGLE_SHEET_ID}/values:batchGet?${rangesParams}`, { params: { key: GOOGLE_API_KEY } });
         return response.data;
     }
     catch (error) {
