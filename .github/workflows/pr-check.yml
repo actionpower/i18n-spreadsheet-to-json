@@ -1,0 +1,17 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate with Node.js
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    uses: ./.github/workflows/common.yml
+    with:
+      node-version: ${{ matrix.node-version }}
