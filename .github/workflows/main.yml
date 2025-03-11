@@ -1,0 +1,41 @@
+name: Build and Publish
+
+# main 브랜치에 푸시될 때만 실행 (PR이 병합된 경우 포함)
+on:
+  push:
+    branches: [main]
+  # 수동으로 워크플로우를 실행할 수 있게 합니다
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    uses: ./.github/workflows/common.yml
+    with:
+      node-version: "20.x"
+
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build package
+        run: yarn build
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
