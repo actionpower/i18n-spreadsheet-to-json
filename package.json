@@ -19,6 +19,7 @@
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-typescript": "^7.23.3",
     "@types/jest": "^29.5.11",
+    "@types/lodash-es": "^4.17.12",
     "@types/lodash.merge": "^4.6.9",
     "@types/lodash.setwith": "^4.3.9",
     "@types/node": "^20.10.4",
@@ -42,8 +43,7 @@
   },
   "dependencies": {
     "axios": "^1.6.2",
-    "lodash.merge": "^4.6.2",
-    "lodash.setwith": "^4.3.2"
+    "lodash-es": "^4.17.21"
   },
   "bin": {
     "i18n": "bin/cli.js"

@@ -1,8 +1,8 @@
 import axios from "axios";
 import fs from "fs";
 import prettier from "prettier";
-import merge from "lodash.merge";
-import setWith from "lodash.setwith";
+import setWith from "lodash-es/setWith.js";
+import merge from "lodash-es/merge.js";
 
 const GOOGLE_SHEET_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 
