@@ -1,6 +1,6 @@
 {
   "name": "@actionpower/i18n-spreadsheet-to-json",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "main": "index.mts",
   "license": "MIT",
