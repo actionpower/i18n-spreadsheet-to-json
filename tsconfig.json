@@ -1,17 +1,28 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "esnext",
-    "moduleResolution": "node",
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowSyntheticDefaultImports": true,
-    "lib": ["es5", "es6", "dom"],
+    "lib": ["es2020"],
     "declaration": true,
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["node", "jest", "@types/lodash.merge", "@types/lodash.setwith"]
+    "types": ["node", "jest", "@types/lodash.merge", "@types/lodash.setwith"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "allowJs": true,
+    "checkJs": false
   },
-  "include": ["index.mts"],
-  "exclude": ["node_modules"],
-  "ts-node": { "esm": true }
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["src/**/*.mts", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
