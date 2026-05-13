@@ -24,5 +24,5 @@
     "experimentalSpecifierResolution": "node"
   },
   "include": ["src/**/*.mts", "src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.mts"]
 }
